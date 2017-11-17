@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>MVVM</title>
+    <title>Simple Vue</title>
 </head>
 <body>
 
-<div id="mvvm-app">
+<div id="app">
     <input type="text" v-model="someStr">
     <input type="text" v-model="child.someStr">
     <!-- <p v-class="className" class="abc">
@@ -25,7 +25,7 @@
 <script src="./vue.js"></script>
 <script>
     var vm = new Vue({
-        el: '#mvvm-app',
+        el: '#app',
         data: {
             someStr: 'hello ',
             className: 'btn',
