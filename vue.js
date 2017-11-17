@@ -18,7 +18,7 @@ class Vue{
         this.$compile = new Compile(this.$el || document.body, this)
     }
 
-    $watch(key, cb, options) {
+    $watch(key, cb) {
         new Watcher(this, key, cb);
     }
 

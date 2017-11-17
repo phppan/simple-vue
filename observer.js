@@ -9,26 +9,31 @@ class Observer {
 
     defineReactive(data, key, val) {
         var dep = new Dep();
-        var childObj = observe(val);
+        observe(val);
 
         Object.defineProperty(data, key, {
             enumerable: true, // 可枚举
             configurable: false, // 不能再define
+
             get: function() {
+                console.log("intercept get:" + key);
                 if (Dep.target) {
-                    dep.depend();
+                    dep.addSub(Dep.target);
                 }
                 return val;
             },
+
             set: function(newVal) {
+                console.log("intercept set:"+key);
                 if (newVal === val) {
                     return;
                 }
                 val = newVal;
+
                 // 新的值是object的话，进行监听
-                childObj = observe(newVal);
+                observe(newVal);
                 // 通知订阅者
-                dep.notify();
+                dep.notify(newVal);
             }
         });
     }
@@ -43,32 +48,21 @@ function observe(value) {
     return new Observer(value);
 }
 
-var uid = 0;
-
 class Dep {
     constructor() {
-        this.id = uid++;
-        this.subs = []
+        this.subs = {}
     }
+
     addSub(sub) {
-        this.subs.push(sub);
-    }
-
-    depend() {
-        Dep.target.addDep(this);
-    }
-
-    removeSub(sub) {
-        var index = this.subs.indexOf(sub);
-        if (index != -1) {
-            this.subs.splice(index, 1);
+        if(!this.subs[sub.uid]) {
+            this.subs[sub.uid] = sub; //防止重复添加
         }
     }
 
-    notify() {
-        this.subs.forEach(function(sub) {
-            sub.update();
-        });
+    notify(newValue) {
+        for(var uid in this.subs){
+            this.subs[uid].update(newValue);
+        }
     }
 }
 
